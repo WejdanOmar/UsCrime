@@ -35,6 +35,8 @@ To what extent do socioeconomic factors such as poverty, unemployment, and educa
 library(tidyverse)
 library(readr)
 library(ggplot2)
+library(ggplot)
+library(sf)
 ```
 
 # Data
@@ -99,41 +101,30 @@ names(Us_crimes)
 ```
 
 # Assuming "poverty_rate", "unemployment_rate", "education_level", and "crime_rate" are the relevant variables
-
 ```{r}
-
 ggplot(Us_crimes, aes(x = PercentHighSchoolOrHigher, y = Rape)) +
-  geom_point() +
+  geom_point(col="lightgreen") +geom_line(aes(group = 1), col="darkgreen")
   labs(x = "PercentHighSchoolOrHigher", y = "Rape", title = "Relationship Between educational level and Rape in US")
 ```
 
 
 
-# 1. Bar plot showing the top 10 states with the highest property crime rates
+# 1. Line plot showing the top 10 states with the highest property crime rates
 ```{r}
 ggplot(head(Us_crimes[order(Us_crimes$UrbanPop, decreasing = TRUE),], 10),
-       aes(x = reorder(state, UrbanPop), y = UrbanPop)) +
-  geom_bar(stat = "identity") +
-  labs(x = "State", y = "UrbanPop", title = "States with the Highest UrbanPop Crime Rates")
+       aes(x = reorder(state, UrbanPop), y = UrbanPop))+geom_point(col="navy")+geom_line(aes(group = 1), col="blue")
+  labs(x = "State", y = "urbanpop") +
+  ggtitle("Line Plot Example")
 ```
 
-## 2. Box plot showing the distribution of violent crime rates by region
+## 2. Scatter plot showing the distribution of violent crime rates by region
 ```{r}
 ggplot(Us_crimes, aes(x = rate, y = Murder)) +
-  geom_boxplot() +
+  geom_point(col="lightgreen") +
   labs(x = "unemployment rate", y = "Violent Crime Rate", title = "Distribution of Violent Crime Rates by unemployment rate")
 ```
 
-# 3. Scatter plot showing the relationship between education level and property crime rates
-
-```{r}
-ggplot(Us_crimes, aes(x = PercentBachelorsOrHigher, y = Assault)) +
-  geom_point() +
-  labs(x = "Education Level", y = "Assault Crime Rate", title = "Relationship BetweenEducation Level and Assault Crime")
-
-```
-
-# 4. Stacked bar plot showing the breakdown of property crimes by type in the top 10 states with the highest property crime rates
+# 3. Stacked bar plot showing the breakdown of property crimes by type in the top 10 states with the highest property crime rates
 ```{r}
 ggplot(head(Us_crimes[order(Us_crimes$Assault, decreasing = TRUE),], 10),
        aes(x = reorder(state, Assault), y = Assault, fill = Assault)) +
@@ -142,18 +133,12 @@ ggplot(head(Us_crimes[order(Us_crimes$Assault, decreasing = TRUE),], 10),
 
 ```
 
-# 6. Scatter plot showing the relationship between poverty rate and violent crime rate
-```{r}
-ggplot(Us_crimes, aes(x = PovertyRate, y = Murder)) +
-  geom_point() +
-  labs(x = "Poverty Rate", y = "Violent Crime Rate", title = "Relationship Between Poverty and Murder Crime")
-```
 
 
 # 1. Scatterplot showing the relationship between unemployment rate and property crime rate
 ```{r}
 ggplot(Us_crimes, aes(x = rate, y = Assault)) +
-  geom_point() +
+  geom_point(col="blue") +
   labs(x = "Unemployment Rate", y = "Assault Crime Rate", title = "Relationship Between Unemployment and Property Crime")
 ```
 
@@ -164,8 +149,46 @@ Description: This scatter plot shows the relationship between unemployment rate 
 
 ```{r}
 ggplot(Us_crimes, aes(x = PercentBachelorsOrHigher, y = UrbanPop)) +
-  geom_point() +
+  geom_point(col="red") +
   labs(x = "Education Level", y = "Violent Crime Rate", title = "Relationship Between Education Level and Violent Crime")
 ```
 
 Description: This scatter plot shows the relationship between education level and violent crime rate. There appears to be a slight negative correlation between the two variables, suggesting that higher education levels may be associated with lower violent crime rates. However, the relationship is not very strong and there are many outliers in the data.
+
+
+# 3. Scatter plot showing the relationship between education level and property crime rates
+
+```{r}
+ggplot(Us_crimes, aes(x = PercentBachelorsOrHigher, y = Assault)) +
+  geom_point(col="orange") +
+  labs(x = "Education Level", y = "Assault Crime Rate", title = "Relationship BetweenEducation Level and Assault Crime")
+
+```
+
+
+# 4. Scatter plot showing the relationship between poverty rate and violent crime rate
+```{r}
+ggplot(Us_crimes, aes(x = PovertyRate, y = Murder)) +
+  geom_point(col="purple") +
+  labs(x = "Poverty Rate", y = "Violent Crime Rate", title = "Relationship Between Poverty and Murder Crime")
+```
+
+#5.
+```{r}
+par(mfrow = c(2, 2))
+
+plot(Us_crimes$ rate, Us_crimes$Assault ,type = "p", col = "blue")
+
+plot(Us_crimes$PercentBachelorsOrHigher, Us_crimes$UrbanPop, type = "p", col = "red")
+
+plot(Us_crimes$PercentBachelorsOrHigher,Us_crimes$Assault,type = "p", col = "orange")
+
+plot(Us_crimes$PovertyRate,Us_crimes$Murder,type = "p", col = "purple")
+
+par(mfrow = c(1, 1))
+
+```
+
+
+
+
