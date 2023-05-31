@@ -1,0 +1,171 @@
+---
+title: "Exploring the Relationship Between Socioeconomic Factors and Crime Rates in the United States"
+Date: "may - 30 - 2023"
+author: "Farha Hussaini- Duaa Suroor- Wejdan Alshateri"
+date: ""
+editor_options: 
+  chunk_output_type: console
+output:
+  pdf_document: default
+  html_document: default
+---
+
+
+# Introduction:
+
+Crime is a complex issue that affects individuals, families, and entire communities. Many factors contribute to the occurrence of crime, including socioeconomic conditions. Understanding the relationship between socioeconomic factors and crime rates is essential to developing effective crime prevention strategies and improving public safety. In the United States, crime rates have fluctuated over time, and identifying the underlying factors that influence these changes is critical for policymakers and law enforcement officials.
+
+# Background:
+
+   The United States has one of the highest crime rates among developed countries. According to the Uniform Crime Reporting (UCR) program, the national crime rate in 2019 was 3,450.5 incidents per 100,000 people. While the overall crime rate has decreased over the past few decades, certain types of crimes, such as property crimes, have remained prevalent in many communities. Research has shown that socioeconomic factors, such as poverty, unemployment, and education levels, can significantly impact crime rates. For instance, individuals living in poverty may resort to criminal activities to meet their basic needs, while unemployment can lead to frustration and a sense of hopelessness that can contribute to criminal behavior. Similarly, low levels of education can limit job prospects and increase the likelihood of criminal activity.
+
+  Despite the known relationship between socioeconomic factors and crime rates, there is still much to learn about the specific ways in which these factors influence crime, and how they can be effectively addressed. Additionally, there is a need to explore the potential of using socioeconomic factors to develop predictive models for crime rates,which can help law enforcement and policymakers to make informed decisions about resource allocation and crime prevention strategies.
+
+   This research aims to explore the relationship between socioeconomic factors and crime rates in the United States. Specifically, the research will examine the extent to which poverty, unemployment, and education levels impact crime rates, and whether a predictive model can be developed to forecast future crime rates based on these factors. To achieve these objectives, the research will use a combination of quantitative methods, including statistical analysis and machine learning techniques.
+
+  The findings of this research will contribute to a deeper understanding of the complex relationship between socioeconomic factors and crime rates, and provide insights into the potential of using these factors to develop predictive models for crime rates. Ultimately, this research can inform the development of evidence-based policies and strategies aimed at reducing crime rates and improving public safety in the United States.
+
+# Research Question:
+
+To what extent do socioeconomic factors such as poverty, unemployment, and education levels impact crime rates in the United States, and can we develop a predictive model to forecast future crime rates based on these factors?
+
+# Packages
+
+```{r load-packages, message = FALSE}
+library(tidyverse)
+library(readr)
+library(ggplot2)
+```
+
+# Data
+
+1- Violent Crime Rates by US State: This data set contains statistics, in arrests per 100,000 residents for assault, murder, and rape in each of the 50 US states in 1973. Also given is the percent of the population living in urban areas.
+
+2- Unemployment Rates for States: contains information about the unemployment rates and ranks for each state in the United States.it provides information about the unemployment situation across the United States, allowing for comparisons between states and an understanding of the variation in unemployment rates across the country
+
+3- Educational Attainment by State: Education is one of the dominant factors in determining how developed a country is. According to the Global Partnership for Education, “Education is a vital human right and plays a key role in human, social, and economic development. Education reduces poverty, boosts the economy, promotes gender equality, and promotes peace. Education is essential in achieving the 17 Global Goals for sustainable development to end extreme poverty, fight inequality and injustice, and protect our planet by 2030. These goals include no poverty, zero hunger, clean water and sanitation, sustainable cities, responsible consumption and production, and more.
+
+4- Poverty Rate by State: Poverty is defined as not having enough income to meet basic needs. This goes beyond just not having enough money for a new vehicle, smartphone, or to take a vacation. Instead, people who live in poverty struggle to keep a roof over their heads, put food on the table, or even purchase basic items like clothing, shoes, and hygiene items.
+
+```{r load-data, message = FALSE}
+unemploye_rate <- read.csv("data/unemploye_rate.csv")
+crimeRate_US <- read_csv("data/US_violent_crime.csv")
+education <- read_csv("data/educational-attainment-by-state-2023.csv")
+poverty_rate <- read_csv("data/poverty-rate-by-state-2023.csv")
+
+```
+ 
+```{r}
+names(crimeRate_US)
+```
+
+```{r}
+crimeRate_US <- crimeRate_US %>%
+  rename(state = ...1)
+```
+
+```{r}
+names(unemploye_rate)
+```
+
+```{r}
+unemploye_rate <- unemploye_rate %>%
+  rename(state = State)
+```
+
+```{r}
+names(poverty_rate)
+```
+# order by AESC
+
+```{r}
+poverty_rate <- poverty_rate[order (poverty_rate$state,decreasing = FALSE),]
+unemploye_rate <- unemploye_rate[order (unemploye_rate$state,decreasing = FALSE),]
+crimeRate_US <- crimeRate_US[order (crimeRate_US$state,decreasing = FALSE),]
+education <- education[order (education$state,decreasing = FALSE),]
+```
+
+
+# leftjoin
+
+```{r}
+Us_crimes <- merge(crimeRate_US, poverty_rate, by = "state", all.x = TRUE)
+Us_crimes <- merge(Us_crimes, education, by = "state", all.x = TRUE)
+Us_crimes <- merge(Us_crimes, unemploye_rate, by = "state", all.x = TRUE)
+```
+
+```{r}
+names(Us_crimes)
+```
+
+# Assuming "poverty_rate", "unemployment_rate", "education_level", and "crime_rate" are the relevant variables
+
+```{r}
+
+ggplot(Us_crimes, aes(x = PercentHighSchoolOrHigher, y = Rape)) +
+  geom_point() +
+  labs(x = "PercentHighSchoolOrHigher", y = "Rape", title = "Relationship Between educational level and Rape in US")
+```
+
+
+
+# 1. Bar plot showing the top 10 states with the highest property crime rates
+```{r}
+ggplot(head(Us_crimes[order(Us_crimes$UrbanPop, decreasing = TRUE),], 10),
+       aes(x = reorder(state, UrbanPop), y = UrbanPop)) +
+  geom_bar(stat = "identity") +
+  labs(x = "State", y = "UrbanPop", title = "States with the Highest UrbanPop Crime Rates")
+```
+
+## 2. Box plot showing the distribution of violent crime rates by region
+```{r}
+ggplot(Us_crimes, aes(x = rate, y = Murder)) +
+  geom_boxplot() +
+  labs(x = "unemployment rate", y = "Violent Crime Rate", title = "Distribution of Violent Crime Rates by unemployment rate")
+```
+
+# 3. Scatter plot showing the relationship between education level and property crime rates
+
+```{r}
+ggplot(Us_crimes, aes(x = PercentBachelorsOrHigher, y = Assault)) +
+  geom_point() +
+  labs(x = "Education Level", y = "Assault Crime Rate", title = "Relationship BetweenEducation Level and Assault Crime")
+
+```
+
+# 4. Stacked bar plot showing the breakdown of property crimes by type in the top 10 states with the highest property crime rates
+```{r}
+ggplot(head(Us_crimes[order(Us_crimes$Assault, decreasing = TRUE),], 10),
+       aes(x = reorder(state, Assault), y = Assault, fill = Assault)) +
+  geom_bar(stat = "identity") +
+  labs(x = "State", y = "Assault Crime Rate", title = "Breakdown of Assault Crimes by Type")
+
+```
+
+# 6. Scatter plot showing the relationship between poverty rate and violent crime rate
+```{r}
+ggplot(Us_crimes, aes(x = PovertyRate, y = Murder)) +
+  geom_point() +
+  labs(x = "Poverty Rate", y = "Violent Crime Rate", title = "Relationship Between Poverty and Murder Crime")
+```
+
+
+# 1. Scatterplot showing the relationship between unemployment rate and property crime rate
+```{r}
+ggplot(Us_crimes, aes(x = rate, y = Assault)) +
+  geom_point() +
+  labs(x = "Unemployment Rate", y = "Assault Crime Rate", title = "Relationship Between Unemployment and Property Crime")
+```
+
+Description: This scatter plot shows the relationship between unemployment rate and property crime rate. As the unemployment rate increases, there appears to be a slight increase in property crime rate. However, the relationship is not very strong and there are many outliers in the data.
+
+
+# 2. Scatter plot showing the relationship between education level and violent crime rate
+
+```{r}
+ggplot(Us_crimes, aes(x = PercentBachelorsOrHigher, y = UrbanPop)) +
+  geom_point() +
+  labs(x = "Education Level", y = "Violent Crime Rate", title = "Relationship Between Education Level and Violent Crime")
+```
+
+Description: This scatter plot shows the relationship between education level and violent crime rate. There appears to be a slight negative correlation between the two variables, suggesting that higher education levels may be associated with lower violent crime rates. However, the relationship is not very strong and there are many outliers in the data.
