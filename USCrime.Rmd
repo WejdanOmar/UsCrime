@@ -125,11 +125,11 @@ names(Us_crimes)
 
 ```{r}
 ggplot(Us_crimes, aes(x = PercentHighSchoolOrHigher, y = Rape)) +
-  geom_point(col="lightgreen") +geom_line(aes(group = 1), col="darkgreen")
+  geom_point(col="darkblue") +geom_line(aes(group = 1), col="lightblue")
   labs(x = "PercentHighSchoolOrHigher", y = "Rape", title = "Relationship Between educational level and Rape in US")
 ```
 
-This shows the relation between the x-coordinate represents the percentage of individuals with a high school education or higher, and the y-coordinate represents the rate of rape. Each data point will be colored in "lightgreen". it appears that there is a rough trend indicating that the mid-range percentage of education is associated with lower rape rates. This suggests a potential inverse relationship between the percentage of individuals with a moderate level of education and the rate of rape.
+This shows the relation between the x-coordinate represents the percentage of individuals with a high school education or higher, and the y-coordinate represents the rate of rape. Each data point will be colored in "lightblue". it appears that there is a rough trend indicating that the mid-range percentage of education is associated with lower rape rates. This suggests a potential inverse relationship between the percentage of individuals with a moderate level of education and the rate of rape.
 
 ## 1. Line plot showing the top 10 states with the highest property crime rates
 
@@ -225,6 +225,54 @@ plot(Us_crimes$PovertyRate,Us_crimes$Murder,type = "p", col = "purple")
 par(mfrow = c(1, 1))
 
 ```
+
+
+```{r}
+
+# Fit a multiple linear regression model
+model <- lm( Rape ~ PovertyRate + rate + PercentHighSchoolOrHigher + PercentBachelorsOrHigher + undefined, data = Us_crimes)
+
+# Predict the crime rate using the model
+Us_crimes$predicted_crime_rate <- predict(model, newdata = Us_crimes)
+
+
+
+# Create a scatter plot of the observed and predicted crime rates with smoothed line
+ggplot(Us_crimes, aes(x = PovertyRate)) +
+  geom_point(aes(y = Rape), color = "black") +
+  geom_smooth(aes(y = PercentBachelorsOrHigher), method = "loess", se = FALSE, color = "blue", linetype = "solid") +
+  geom_smooth(aes(y = predicted_crime_rate), method = "loess", se = FALSE, color = "red", linetype = "dashed") +
+  labs(x = "predicted crime", y = "observed crime", title = "Regression Results") +
+  theme_bw() +
+  theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+        axis.title = element_text(size = 14),
+        axis.text = element_text(size = 12),
+        legend.title = element_text(size = 12),
+        legend.text = element_text(size = 10))
+
+```
+
+
+```{r}
+library(ggplot2)
+
+# Create a line plot of the observed and predicted crime rates with dots
+ggplot(Us_crimes, aes(x = PovertyRate, y = Murder)) +
+  geom_line(color = "blue", linetype = "solid") +
+  geom_point(color = "blue") +
+  geom_line(data = Us_crimes, aes(y = predicted_crime_rate), color = "red", linetype = "dashed") +
+  geom_point(data = Us_crimes, aes(y = predicted_crime_rate), color = "red") +
+  labs(x = "Murder", y = "Rate", title = "Regression Results") +
+  theme_bw() +
+  theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+        axis.title = element_text(size = 14),
+        axis.text = element_text(size = 12),
+        legend.title = element_text(size = 12),
+        legend.text = element_text(size = 10))
+
+```
+
+
 
 This is a 2x2 grid of scatter plots to visualize the relationships between different variables in the Us_crimes dataset. The four scatter plots included: Crime Rate vs. Assault Percent with Bachelor's Degree Higher vs. Urban Population Percent with Bachelor's Degree or Higher vs.Assault Poverty Rate vs. Murder
 
