@@ -14,9 +14,30 @@ output:
   html_document: default
 ---
 
-# Exploring the Relationship Between Socioeconomic Factors and Crime Rates in the United States
+# Title Page
 
-# Introduction:
+
+<!--- Customize this title page to include the appropriate institution, department, and other required information. -->
+
+\begin{center}
+    \textbf{\LARGE Exploring the Relationship Between Socioeconomic Factors and Crime Rates in
+  the United States} \\
+    \vspace{0.5cm}
+    \large Farha Hussaini \\ Duaa Suroor \\ Wejdan Alshateri \\ 
+    \small Institution Name \\ Zain Balfagih 
+    \small Department Name \\ Computer science 
+    \small Date of Submission \\ JUN 1 2023
+    \vspace{1cm}
+\end{center}
+
+# Table of Contents
+
+<!--- This table of contents will be automatically generated based on the headers in the document. -->
+
+\tableofcontents
+
+
+# Introduction
 
 Crime is a complex issue that affects individuals, families, and entire communities. Many factors contribute to the occurrence of crime, including socioeconomic conditions. Understanding the relationship between socioeconomic factors and crime rates is essential to developing effective crime prevention strategies and improving public safety. In the United States, crime rates have fluctuated over time, and identifying the underlying factors that influence these changes is critical for policymakers and law enforcement officials.
 
@@ -32,9 +53,25 @@ This research aims to explore the relationship between socioeconomic factors and
 
 The findings of this research will contribute to a deeper understanding of the complex relationship between socioeconomic factors and crime rates, and provide insights into the potential of using these factors to develop predictive models for crime rates. Ultimately, this research can inform the development of evidence-based policies and strategies aimed at reducing crime rates and improving public safety in the United States.
 
+# problem statment:
+
+The research problem focuses on evaluating the feasibility and accuracy of using advanced statistical
+and machine learning techniques to develop a predictive model for crime rates in the United States
+based on socioeconomic factors such as poverty, unemployment, and education levels. The goal is to
+determine the extent to which these socioeconomic indicators influence crime rates and to investigate
+the potential of utilizing them as reliable predictors for forecasting future crime rates. By addressing
+this research problem, the study aims to contribute to the understanding of the relationship between
+socioeconomic factors and crime rates, while also exploring the practicality of leveraging these
+indicators for predictive modeling in the field of crime analysis and prevention.
+
 # Research Question:
 
 To what extent do socioeconomic factors such as poverty, unemployment, and education levels impact crime rates in the United States, and can we develop a predictive model to forecast future crime rates based on these factors?
+
+
+# Methodology
+
+Describe the research design, data collection methods, data analysis techniques, and any statistical tools or software used in the study. Provide a detailed explanation of the sample selection, data collection instruments, and data cleaning procedures. Use tables and diagrams to illustrate the methodology, if appropriate.
 
 # Literature Review
 
@@ -72,31 +109,31 @@ poverty_rate <- read_csv("data/poverty-rate-by-state-2023.csv")
 
 ```
 
-```{r}
+```{r echo = FALSE}
 names(crimeRate_US)
 ```
 
-```{r}
+```{r echo = FALSE}
 crimeRate_US <- crimeRate_US %>%
   rename(state = ...1)
 ```
 
-```{r}
+```{r echo = FALSE}
 names(unemploye_rate)
 ```
 
-```{r}
+```{r echo = FALSE}
 unemploye_rate <- unemploye_rate %>%
   rename(state = State)
 ```
 
-```{r}
+```{r echo = FALSE}
 names(poverty_rate)
 ```
 
 ## order by AESC
 
-```{r}
+```{r echo = FALSE}
 poverty_rate <- poverty_rate[order (poverty_rate$state,decreasing = FALSE),]
 unemploye_rate <- unemploye_rate[order (unemploye_rate$state,decreasing = FALSE),]
 crimeRate_US <- crimeRate_US[order (crimeRate_US$state,decreasing = FALSE),]
@@ -107,7 +144,7 @@ This code sort the datasets (poverty_rate, unemploye_rate, crimeRate_US, and edu
 
 ## leftjoin
 
-```{r}
+```{r echo = FALSE}
 Us_crimes <- merge(crimeRate_US, poverty_rate, by = "state", all.x = TRUE)
 Us_crimes <- merge(Us_crimes, education, by = "state", all.x = TRUE)
 Us_crimes <- merge(Us_crimes, unemploye_rate, by = "state", all.x = TRUE)
@@ -115,7 +152,7 @@ Us_crimes <- merge(Us_crimes, unemploye_rate, by = "state", all.x = TRUE)
 
 Merge the datasets crimeRate_US, poverty_rate, education, and unemploye_rate based on the "state" column. The resulting merged dataset is assigned to the variable Us_crimes By merging these datasets together, the resulting Us_crimes dataset will contain the combined information from crimeRate_US, poverty_rate, education, and unemploye_rate based on the matching "state" column. This allows for a comprehensive analysis of the relationship between crime rates, poverty rates, educational attainment, and unemployment rates in the United States.
 
-```{r}
+```{r echo = FALSE}
 names(Us_crimes)
 ```
 
@@ -123,17 +160,17 @@ names(Us_crimes)
 
 ## Assuming "poverty_rate", "unemployment_rate", "education_level", and "crime_rate" are the relevant variables
 
-```{r}
+```{r echo = FALSE}
 ggplot(Us_crimes, aes(x = PercentHighSchoolOrHigher, y = Rape)) +
-  geom_point(col="darkblue") +geom_line(aes(group = 1), col="lightblue")
+  geom_point(col="lightgreen") +geom_line(aes(group = 1), col="darkgreen")
   labs(x = "PercentHighSchoolOrHigher", y = "Rape", title = "Relationship Between educational level and Rape in US")
 ```
 
-This shows the relation between the x-coordinate represents the percentage of individuals with a high school education or higher, and the y-coordinate represents the rate of rape. Each data point will be colored in "lightblue". it appears that there is a rough trend indicating that the mid-range percentage of education is associated with lower rape rates. This suggests a potential inverse relationship between the percentage of individuals with a moderate level of education and the rate of rape.
+This shows the relation between the x-coordinate represents the percentage of individuals with a high school education or higher, and the y-coordinate represents the rate of rape. Each data point will be colored in "lightgreen". it appears that there is a rough trend indicating that the mid-range percentage of education is associated with lower rape rates. This suggests a potential inverse relationship between the percentage of individuals with a moderate level of education and the rate of rape.
 
 ## 1. Line plot showing the top 10 states with the highest property crime rates
 
-```{r}
+```{r echo = FALSE}
 ggplot(head(Us_crimes[order(Us_crimes$UrbanPop, decreasing = TRUE),], 10),
        aes(x = reorder(state, UrbanPop), y = UrbanPop)) +
   geom_point(col="navy") +
@@ -146,7 +183,7 @@ This plot illustrates that California has the highest number of violent crime ra
 
 ## 2. Scatter plot showing the distribution of violent crime rates by region
 
-```{r}
+```{r echo = FALSE}
 ggplot(Us_crimes, aes(x = rate, y = Murder)) +
   geom_point(col="lightgreen") +
   labs(x = "unemployment rate", y = "Violent Crime Rate", title = "Distribution of Violent Crime Rates by unemployment rate")
@@ -156,7 +193,7 @@ This code will create a scatter plot that visualizes the distribution of violent
 
 ## 3. Stacked bar plot showing the breakdown of property crimes by type in the top 10 states with the highest property crime rates
 
-```{r}
+```{r echo = FALSE}
 ggplot(head(Us_crimes[order(Us_crimes$Assault, decreasing = TRUE),], 10),
        aes(x = reorder(state, Assault), y = Assault, fill = Assault)) +
   geom_bar(stat = "identity") +
@@ -168,7 +205,7 @@ This bar chart will visually represents the breakdown of assault crimes by type 
 
 ## 1. Scatter-plot showing the relationship between unemployment rate and property crime rate
 
-```{r}
+```{r echo = FALSE}
 ggplot(Us_crimes, aes(x = rate, y = Assault)) +
   geom_point(col="blue") +
   labs(x = "Unemployment Rate", y = "Assault Crime Rate", title = "Relationship Between Unemployment and Property Crime")
@@ -177,8 +214,12 @@ ggplot(Us_crimes, aes(x = rate, y = Assault)) +
 Description: This scatter plot shows the relationship between unemployment rate and property crime rate. As the unemployment rate increases, there appears to be a slight increase in property crime rate. However, the relationship is not very strong and there are many outliers in the data.
 
 ## 2. Scatter plot showing the relationship between education level and violent crime rate
+```{r echo = FALSE}
+names(Us_crimes)
+```
 
-```{r}
+
+```{r echo = FALSE}
 ggplot(Us_crimes, aes(x = PercentBachelorsOrHigher, y = UrbanPop)) +
   geom_point(col="red") +
   labs(x = "Education Level", y = "Violent Crime Rate", title = "Relationship Between Education Level and Violent Crime")
@@ -188,7 +229,7 @@ Description: This scatter plot shows the relationship between education level an
 
 ## 3. Scatter plot showing the relationship between education level and property crime rates
 
-```{r}
+```{r echo = FALSE}
 ggplot(Us_crimes, aes(x = PercentBachelorsOrHigher, y = Assault)) +
   geom_point(col="orange") +
   labs(x = "Education Level", y = "Assault Crime Rate", title = "Relationship BetweenEducation Level and Assault Crime")
@@ -199,7 +240,7 @@ The scatter plot clearly demonstrates a negative correlation between educational
 
 ## 4. Scatter plot showing the relationship between poverty rate and violent crime rate
 
-```{r}
+```{r echo = FALSE}
 ggplot(Us_crimes, aes(x = PovertyRate, y = Murder)) +
   geom_point(col="purple") +
   labs(x = "Poverty Rate", y = "Violent Crime Rate", title = "Relationship Between Poverty and Murder Crime")
@@ -211,7 +252,7 @@ According to the findings, places with higher poverty rates also have higher cri
 
 #5.
 
-```{r}
+```{r echo = FALSE}
 par(mfrow = c(2, 2))
 
 plot(Us_crimes$ rate, Us_crimes$Assault ,type = "p", col = "blue")
@@ -227,9 +268,23 @@ par(mfrow = c(1, 1))
 ```
 
 
-```{r}
+This is a 2x2 grid of scatter plots to visualize the relationships between different variables in the Us_crimes dataset. The four scatter plots included: Crime Rate vs. Assault Percent with Bachelor's Degree Higher vs. Urban Population Percent with Bachelor's Degree or Higher vs.Assault Poverty Rate vs. Murder
 
-# Fit a multiple linear regression model
+as a result,
+
+1.  The negative correlation between Crime Rate and Assault (top-left graph) suggests that areas with lower overall crime rates may have a higher concentration of assault incidents. This indicates that while the overall crime rate may be lower, assault remains a significant issue in those areas.
+
+2.  The top-right graph indicates a positive relationship between the percentage of individuals with a Bachelor's degree or higher and the Urban Population. This suggests that urban areas tend to attract individuals with higher educational attainment, likely due to the availability of educational opportunities and higher-paying jobs.
+
+3.  The down-left graph demonstrates a complex relationship between the percentage of individuals with a Bachelor's degree or higher and assault incidents. While higher educational attainment is generally associated with lower levels of criminal behavior, the graph shows that the relationship may not be straightforward. Other factors, such as neighborhood characteristics, socioeconomic disparities, and access to resources, may influence the occurrence of assault incidents in areas with varying levels of educational attainment.
+
+4.  The down-right graph reveals a positive correlation between the poverty rate and murder rate. This indicates that as the poverty rate increases, the likelihood of experiencing higher murder rates also tends to increase. The presence of poverty-related challenges, such as limited opportunities and social inequalities, may contribute to an environment conducive to violent crime, including murder.
+
+Overall, these correlations emphasize the significance of taking different socioeconomic aspects into account when assessing crime statistics. While educational attainment and poverty rates are important, other contextual factors such as urbanization, neighborhood characteristics, and social dynamics should be considered to gain a more complete understanding of the complex relationship between socioeconomic factors and crime rates.
+
+#Linear regression mmodel
+```{r echo = FALES}
+ #Fit a multiple linear regression model
 model <- lm( Rape ~ PovertyRate + rate + PercentHighSchoolOrHigher + PercentBachelorsOrHigher + undefined, data = Us_crimes)
 
 # Predict the crime rate using the model
@@ -250,10 +305,7 @@ ggplot(Us_crimes, aes(x = PovertyRate)) +
         legend.title = element_text(size = 12),
         legend.text = element_text(size = 10))
 
-```
 
-
-```{r}
 library(ggplot2)
 
 # Create a line plot of the observed and predicted crime rates with dots
@@ -269,24 +321,8 @@ ggplot(Us_crimes, aes(x = PovertyRate, y = Murder)) +
         axis.text = element_text(size = 12),
         legend.title = element_text(size = 12),
         legend.text = element_text(size = 10))
-
 ```
 
-
-
-This is a 2x2 grid of scatter plots to visualize the relationships between different variables in the Us_crimes dataset. The four scatter plots included: Crime Rate vs. Assault Percent with Bachelor's Degree Higher vs. Urban Population Percent with Bachelor's Degree or Higher vs.Assault Poverty Rate vs. Murder
-
-as a result,
-
-1.  The negative correlation between Crime Rate and Assault (top-left graph) suggests that areas with lower overall crime rates may have a higher concentration of assault incidents. This indicates that while the overall crime rate may be lower, assault remains a significant issue in those areas.
-
-2.  The top-right graph indicates a positive relationship between the percentage of individuals with a Bachelor's degree or higher and the Urban Population. This suggests that urban areas tend to attract individuals with higher educational attainment, likely due to the availability of educational opportunities and higher-paying jobs.
-
-3.  The down-left graph demonstrates a complex relationship between the percentage of individuals with a Bachelor's degree or higher and assault incidents. While higher educational attainment is generally associated with lower levels of criminal behavior, the graph shows that the relationship may not be straightforward. Other factors, such as neighborhood characteristics, socioeconomic disparities, and access to resources, may influence the occurrence of assault incidents in areas with varying levels of educational attainment.
-
-4.  The down-right graph reveals a positive correlation between the poverty rate and murder rate. This indicates that as the poverty rate increases, the likelihood of experiencing higher murder rates also tends to increase. The presence of poverty-related challenges, such as limited opportunities and social inequalities, may contribute to an environment conducive to violent crime, including murder.
-
-Overall, these correlations emphasize the significance of taking different socioeconomic aspects into account when assessing crime statistics. While educational attainment and poverty rates are important, other contextual factors such as urbanization, neighborhood characteristics, and social dynamics should be considered to gain a more complete understanding of the complex relationship between socioeconomic factors and crime rates.
 
 # Discussion
 
